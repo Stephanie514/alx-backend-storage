@@ -1,5 +1,5 @@
---SQL script that creates a stored procedure AddBonus that
---adds a new correction for a student.
+-- SQL script that creates a stored procedure AddBonus that
+-- adds a new correction for a student.
 DELIMITER //
 
 CREATE PROCEDURE AddBonus(
