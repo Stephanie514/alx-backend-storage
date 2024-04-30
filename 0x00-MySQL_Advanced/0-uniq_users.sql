@@ -1,5 +1,5 @@
----SQL script that creates a table users following these requirements:
----id, integer, never null, auto increment and primary key
+-- SQL script that creates a table users following these requirements:
+-- id, integer, never null, auto increment and primary key
 
 CREATE TABLE IF NOT EXISTS users (
 	id int AUTO_INCREMENT PRIMARY KEY,

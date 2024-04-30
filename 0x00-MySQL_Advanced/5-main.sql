@@ -1,4 +1,3 @@
-Enter password: 
 -- Show users and update (or not) email
 SELECT * FROM users;
 
