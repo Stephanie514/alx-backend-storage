@@ -9,6 +9,7 @@ The top must be ordered
 The average score must be part of each item returned with key = averageScore
 """
 
+
 def top_students(mongo_collection):
     """
     Returns all students sorted by average score
