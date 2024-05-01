@@ -7,6 +7,19 @@ Description: Implements a Cache class using Redis.
 import redis
 import uuid
 from typing import Union, Callable
+from functools import wraps
+
+
+def count_calls(method: Callable) -> Callable:
+    """
+    Decorator to count how many times a method is called.
+    """
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        key = f"cache_calls:{method.__qualname__}"
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
+    return wrapper
 
 
 class Cache:
