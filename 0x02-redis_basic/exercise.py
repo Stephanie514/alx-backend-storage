@@ -4,38 +4,10 @@ Module: cache.py
 Description: Implements a Cache class using Redis.
 """
 
+from typing import Union, Callable
+from functools import wraps
 import redis
 import uuid
-from typing import Callable, Union
-from functools import wraps
-
-
-def call_history(method: Callable) -> Callable:
-    """
-    Decorator to store the history of inputs and outputs for a function.
-    """
-    @wraps(method)
-    def wrapper(self, *args, **kwargs):
-        input_key = f"{method.__qualname__}:inputs"
-        output_key = f"{method.__qualname__}:outputs"
-        self._redis.rpush(input_key, str(args))
-        output = method(self, *args, **kwargs)
-        self._redis.rpush(output_key, output)
-        return output
-    return wrapper
-
-
-def count_calls(method: Callable) -> Callable:
-    """
-    Decorator to count how many times a method is called.
-    """
-    @wraps(method)
-    def wrapper(self, *args, **kwargs):
-        key = f"cache_calls:{method.__qualname__}"
-        self._redis.incr(key)
-        return method(self, *args, **kwargs)
-    return wrapper
-
 
 class Cache:
     """
@@ -98,3 +70,20 @@ class Cache:
         Retrieves data from Redis as an integer.
         """
         return self.get(key, fn=int)
+    
+    def replay(self, method: Callable) -> None:
+        """
+        Display the history of calls for a particular function.
+
+        Args:
+            method (Callable): The function for which to display the history of calls.
+        """
+        key_inputs = f"{method.__qualname__}:inputs"
+        key_outputs = f"{method.__qualname__}:outputs"
+        inputs = self._redis.lrange(key_inputs, 0, -1)
+        outputs = self._redis.lrange(key_outputs, 0, -1)
+        
+        print(f"{method.__qualname__} was called {len(inputs)} times:")
+        for args, output in zip(inputs, outputs):
+            print(f"{method.__qualname__}(*{args.decode()}) -> {output.decode()}")
+    
