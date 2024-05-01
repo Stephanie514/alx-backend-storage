@@ -45,6 +45,10 @@ class Cache:
             str: The generated key used to store the data in Redis.
         """
         key = str(uuid.uuid4())
+        input_key = f"{self.store.__qualname__}:inputs"
+        output_key = f"{self.store.__qualname__}:outputs"
+        self._redis.rpush(input_key, str(data))
+        self._redis.rpush(output_key, key)
         self._redis.set(key, data)
         return key
 
