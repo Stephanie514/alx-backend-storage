@@ -8,6 +8,7 @@ import redis
 import uuid
 from typing import Union
 
+
 class Cache:
     """
     Cache class for storing data in Redis.
@@ -15,7 +16,8 @@ class Cache:
 
     def __init__(self):
         """
-        Initializes a Cache object with a Redis client instance and flushes the Redis database.
+        Initializes a Cache object with a Redis client instance and
+        flushes the Redis database.
         """
         self._redis = redis.Redis()
         self._redis.flushdb()
