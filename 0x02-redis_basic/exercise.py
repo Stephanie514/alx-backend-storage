@@ -6,7 +6,7 @@ Description: Implements a Cache class using Redis.
 
 import redis
 import uuid
-from typing import Union
+from typing import Union, Callable
 
 
 class Cache:
@@ -35,3 +35,36 @@ class Cache:
         key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
+
+    def get(self, key: str, fn: Callable = None) -> Union[str, bytes, int, float, None]:
+        """
+        Retrieves data from Redis using the given key and optionally applies a
+        conversion function.
+
+        Args:
+            key (str): The key used to retrieve data from Redis.
+            fn (Callable): Optional conversion function to be applied to
+            the retrieved data.
+
+        Returns:
+            Union[str, bytes, int, float, None]: The retrieved data, optionally
+            converted using the provided function.
+        """
+        data = self._redis.get(key)
+        if data is None:
+            return None
+        if fn:
+            return fn(data)
+        return data
+
+    def get_str(self, key: str) -> Union[str, None]:
+        """
+        Retrieves data from Redis as a string.
+        """
+        return self.get(key, fn=lambda d: d.decode("utf-8"))
+
+    def get_int(self, key: str) -> Union[int, None]:
+        """
+        Retrieves data from Redis as an integer.
+        """
+        return self.get(key, fn=int)
